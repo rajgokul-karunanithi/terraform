@@ -1,31 +1,39 @@
-resource "aws_instance" "web-server" {
-  ami           = "ami-0a23ccb2cdd9286bb"
-  instance_type = "t2.micro"
-  key_name      = "saro-arun"
-  tags = {
-    Name = "This server by jenkins"
-  }
-} 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# DEPLOY MYSQL ON RDS
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-output "public-ip" {
-  value = "${aws_instance.web-server.public_ip}"
+# ----------------------------------------------------------------------------------------------------------------------
+# REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
+# ----------------------------------------------------------------------------------------------------------------------
+
+terraform {
+  # This module is now only being tested with Terraform 0.13.x. However, to make upgrading easier, we are setting
+  # 0.12.26 as the minimum version, as that version added support for required_providers with source URLs, making it
+  # forwards compatible with 0.13.x code.
+  required_version = ">= 0.12.26"
 }
 
-output "private-ip" {
-  value = "${aws_instance.web-server.private_ip}"
+# ------------------------------------------------------------------------------
+# CONFIGURE OUR AWS CONNECTION
+# ------------------------------------------------------------------------------
+
+provider "aws" {
+  region = "us-east-2"
 }
 
-output "instance_state" {
-  value = "${aws_instance.web-server.instance_state}"
+# ------------------------------------------------------------------------------
+# DEPLOY MYSQL ON RDS
+# ------------------------------------------------------------------------------
+
+resource "aws_db_instance" "example" {
+  identifier_prefix   = "terraform-up-and-running"
+  engine              = "mysql"
+  allocated_storage   = 10
+  instance_class      = "db.t2.micro"
+  name                = "example_database"
+  username            = "admin"
+  password            = var.db_password
+
+  # Don't copy this to your production examples. It's only here to make it quicker to delete this DB.
+  skip_final_snapshot = true
 }
-
-
-output "Public-DNS" {
-  value = "${aws_instance.web-server.public_dns}"
-}
-
-
-output "myserver-arn" {
-  value = "${aws_instance.web-server.arn}"
-}
-

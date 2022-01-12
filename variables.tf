@@ -1,1 +1,4 @@
-key_name = "${var.key_name}"
+variable "db_password" {
+  description = "The password for the database"
+  type        = string
+}
