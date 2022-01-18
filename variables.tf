@@ -1,4 +1,12 @@
-variable "db_password" {
-  description = "The password for the database"
-  type        = string
+variable "region" {
+	type = string
+}
+
+variable "ami" {
+	type = string
+}
+
+variable "instance_type" {
+	type    = string
+	default = "t2.micro"
 }
